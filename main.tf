@@ -798,18 +798,6 @@ resource "checkly_alert_channel" "email_ac" {
   ssl_expiry_threshold = 22
 }
 
-resource "checkly_alert_channel" "email_ac_hannes" {
-  email {
-    address = "hannes@checklyhq.com"
-  }
-  send_recovery = true
-  send_failure = false
-  send_degraded = true
-  ssl_expiry = true
-  ssl_expiry_threshold = 22
-}
-
-
 resource "checkly_alert_channel" "pagerduty_ac" {
   pagerduty {
     account      = "checkly"
