@@ -813,7 +813,7 @@ resource "checkly_alert_channel" "email_ac_hannes" {
 resource "checkly_alert_channel" "pagerduty_ac" {
   pagerduty {
     account      = "checkly"
-    service_key  = "key1"
+    service_key  = "key"
     service_name = "pdalert"
   }
 }
