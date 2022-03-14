@@ -825,4 +825,4 @@ resource "checkly_alert_channel" "slack_ac" {
     channel = "#checkly-notifications"
     url = "https://slack.com/webhook"
   }
-}
+} 
