@@ -800,9 +800,9 @@ resource "checkly_alert_channel" "email_ac" {
   ssl_expiry_threshold = 22
 }
 
-resource "checkly_alert_channel" "email_ac_hannes" {
+resource "checkly_alert_channel" "email_ac_urgent" {
   email {
-    address = "hannes@checklyhq.com"
+    address = "giovanni+urgent@checklyhq.com"
   }
   send_recovery = true
   send_failure = false
