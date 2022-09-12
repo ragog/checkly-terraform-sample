@@ -5,7 +5,7 @@ terraform {
   required_providers {
     checkly = {
       source = "checkly/checkly"
-      version = "1.4.3"
+      version = "1.6.2"
     }
   }
 }
@@ -25,10 +25,9 @@ resource "checkly_check_group" "key-shop-flows" {
     "eu-central-1"
   ]
 
-  alert_channel_subscription {
-    channel_id = checkly_alert_channel.slack_ac.id
-    activated  = true
-  }
+  private_locations = [
+    "new-private-location"
+  ]
 
   concurrency = 2
   environment_variables = {
@@ -47,7 +46,7 @@ resource "checkly_check" "browser-check" {
   type                      = "BROWSER"
   activated                 = true
   should_fail               = false
-  frequency                 = 1
+  frequency                 = 10
   double_check              = true
   ssl_check                 = false
   use_global_alert_settings = true
@@ -58,6 +57,43 @@ resource "checkly_check" "browser-check" {
 
   script = file("${path.module}/scripts/${each.key}")
   group_id = checkly_check_group.key-shop-flows.id
+
+}
+
+resource "checkly_check_group" "e2e-scenarios" {
+  name      = "E2E Scenarios"
+  activated = true
+  muted     = false
+
+  locations = [
+    "eu-west-1",
+    "eu-central-1"
+  ]
+
+  concurrency = 2
+  double_check              = true
+  use_global_alert_settings = false
+
+}
+
+resource "checkly_check" "browser-check-demo" {
+  for_each = fileset("${path.module}/demo-scripts", "*")
+
+  name                      = each.key
+  type                      = "BROWSER"
+  activated                 = true
+  should_fail               = false
+  frequency                 = 30
+  double_check              = true
+  ssl_check                 = false
+  use_global_alert_settings = true
+  locations = [
+    "us-west-1",
+    "eu-central-1"
+  ]
+
+  script = file("${path.module}/demo-scripts/${each.key}")
+  group_id = checkly_check_group.e2e-scenarios.id
 
 }
 
@@ -102,7 +138,7 @@ resource "checkly_check" "post-user" {
   type                      = "API"
   activated                 = true
   should_fail               = false
-  frequency                 = 1
+  frequency                 = 10
   double_check              = true
   ssl_check                 = true
   use_global_alert_settings = true
@@ -143,11 +179,6 @@ resource "checkly_check_group" "users-api" {
     "eu-central-1"
   ]
 
-  alert_channel_subscription {
-    channel_id = checkly_alert_channel.slack_ac.id
-    activated  = true
-  }
-
   concurrency = 2
   double_check              = true
   use_global_alert_settings = false
@@ -158,7 +189,7 @@ resource "checkly_check" "create-order" {
   type                      = "API"
   activated                 = true
   should_fail               = false
-  frequency                 = 1
+  frequency                 = 10
   double_check              = true
   ssl_check                 = true
   use_global_alert_settings = true
@@ -194,7 +225,7 @@ resource "checkly_check" "update-order" {
   type                      = "API"
   activated                 = true
   should_fail               = false
-  frequency                 = 1
+  frequency                 = 10
   double_check              = true
   ssl_check                 = true
   use_global_alert_settings = true
@@ -230,7 +261,7 @@ resource "checkly_check" "cancel-order" {
   type                      = "API"
   activated                 = true
   should_fail               = false
-  frequency                 = 1
+  frequency                 = 10
   double_check              = true
   ssl_check                 = true
   use_global_alert_settings = true
@@ -266,7 +297,7 @@ resource "checkly_check" "add-to-wishlist" {
   type                      = "API"
   activated                 = true
   should_fail               = false
-  frequency                 = 1
+  frequency                 = 10
   double_check              = true
   ssl_check                 = true
   use_global_alert_settings = true
@@ -315,10 +346,6 @@ resource "checkly_check_group" "orders-api" {
     activated  = true
   }
 
-  alert_channel_subscription {
-    channel_id = checkly_alert_channel.slack_ac.id
-    activated  = true
-  }
 }
 
 resource "checkly_check" "create-inventory-item" {
@@ -326,7 +353,7 @@ resource "checkly_check" "create-inventory-item" {
   type                      = "API"
   activated                 = true
   should_fail               = false
-  frequency                 = 1
+  frequency                 = 10
   double_check              = true
   ssl_check                 = true
   use_global_alert_settings = true
@@ -362,7 +389,7 @@ resource "checkly_check" "update-inventory-item" {
   type                      = "API"
   activated                 = true
   should_fail               = false
-  frequency                 = 1
+  frequency                 = 10
   double_check              = true
   ssl_check                 = true
   use_global_alert_settings = true
@@ -398,7 +425,7 @@ resource "checkly_check" "remove-inventory-item" {
   type                      = "API"
   activated                 = true
   should_fail               = false
-  frequency                 = 1
+  frequency                 = 10
   double_check              = true
   ssl_check                 = true
   use_global_alert_settings = true
@@ -434,7 +461,7 @@ resource "checkly_check" "get-full-inventory" {
   type                      = "API"
   activated                 = true
   should_fail               = false
-  frequency                 = 1
+  frequency                 = 10
   double_check              = true
   ssl_check                 = true
   use_global_alert_settings = true
@@ -483,10 +510,6 @@ resource "checkly_check_group" "inventory-api" {
     activated  = true
   }
 
-  alert_channel_subscription {
-    channel_id = checkly_alert_channel.slack_ac.id
-    activated  = true
-  }
 }
 
 resource "checkly_check" "update-product-details" {
@@ -494,7 +517,7 @@ resource "checkly_check" "update-product-details" {
   type                      = "API"
   activated                 = true
   should_fail               = false
-  frequency                 = 1
+  frequency                 = 10
   double_check              = true
   ssl_check                 = true
   use_global_alert_settings = true
@@ -530,7 +553,7 @@ resource "checkly_check" "remove-product" {
   type                      = "API"
   activated                 = true
   should_fail               = false
-  frequency                 = 1
+  frequency                 = 10
   double_check              = true
   ssl_check                 = true
   use_global_alert_settings = true
@@ -566,7 +589,7 @@ resource "checkly_check" "create-collection" {
   type                      = "API"
   activated                 = true
   should_fail               = false
-  frequency                 = 1
+  frequency                 = 10
   double_check              = true
   ssl_check                 = true
   use_global_alert_settings = true
@@ -602,7 +625,7 @@ resource "checkly_check" "remove-collection" {
   type                      = "API"
   activated                 = true
   should_fail               = false
-  frequency                 = 1
+  frequency                 = 10
   double_check              = true
   ssl_check                 = true
   use_global_alert_settings = true
@@ -638,7 +661,7 @@ resource "checkly_check" "promote-collection" {
   type                      = "API"
   activated                 = true
   should_fail               = false
-  frequency                 = 1
+  frequency                 = 10
   double_check              = true
   ssl_check                 = true
   use_global_alert_settings = true
@@ -687,10 +710,6 @@ resource "checkly_check_group" "products-api" {
     activated  = true
   }
 
-  alert_channel_subscription {
-    channel_id = checkly_alert_channel.slack_ac.id
-    activated  = true
-  }
 }
 
 resource "checkly_check" "create-event" {
@@ -698,7 +717,7 @@ resource "checkly_check" "create-event" {
   type                      = "API"
   activated                 = true
   should_fail               = false
-  frequency                 = 1
+  frequency                 = 10
   double_check              = true
   ssl_check                 = true
   use_global_alert_settings = true
@@ -734,7 +753,7 @@ resource "checkly_check" "remove-event" {
   type                      = "API"
   activated                 = true
   should_fail               = false
-  frequency                 = 1
+  frequency                 = 10
   double_check              = true
   ssl_check                 = true
   use_global_alert_settings = true
@@ -783,10 +802,6 @@ resource "checkly_check_group" "events-api" {
     activated  = true
   }
 
-  alert_channel_subscription {
-    channel_id = checkly_alert_channel.slack_ac.id
-    activated  = true
-  }
 }
 
 resource "checkly_alert_channel" "email_ac" {
@@ -802,7 +817,7 @@ resource "checkly_alert_channel" "email_ac" {
 
 resource "checkly_alert_channel" "email_ac_urgent" {
   email {
-    address = "giovanni+urgent@checklyhq.com"
+    address = "giovanni+alerts@checklyhq.com"
   }
   send_recovery = true
   send_failure = false
@@ -820,9 +835,14 @@ resource "checkly_alert_channel" "pagerduty_ac" {
   }
 }
 
-resource "checkly_alert_channel" "slack_ac" {
-  slack {
-    channel = "#checkly-notifications"
-    url = "https://slack.com/webhook"
-  }
-} 
+output "private-location-key" {
+  value = checkly_private_location.location.keys
+  sensitive = true
+}
+
+# Simple Private Location example
+resource "checkly_private_location" "location" {
+  name = "New Private Location"
+  slug_name = "new-private-location"
+  icon = "location"
+}
