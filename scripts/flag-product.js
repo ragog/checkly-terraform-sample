@@ -1,11 +1,6 @@
-const { chromium } = require("playwright");
-const assert = require("chai").assert;
+import { test, expect } from '@playwright/test';
 
-(async () => {
-
- // launch the browser and open a new page
- const browser = await chromium.launch();
- const page = await browser.newPage();
+test('flag product', async ({ page }) => {
 
  const bookList = [
    "The Foreigner",
@@ -43,6 +38,4 @@ const assert = require("chai").assert;
  // ...then assert that the original array is now empty
  assert.equal(bookList.length, 0);
 
- // close the browser and terminate the session
- await browser.close();
-})();
+});
