@@ -17,7 +17,7 @@ test('search', async ({ page }) => {
 	expect(resultsNumber).toBe(bookList.length);
 
 	// remove every element found from the original array...
-	for (i = 0; i < resultsNumber; i++) {
+	for (let i = 0; i < resultsNumber; i++) {
 		const resultTitle = await page.$eval(`.preview:nth-child(${i + 1}) > .preview-title`, (e) => e.innerText);
 
 		const index = bookList.indexOf(resultTitle);
