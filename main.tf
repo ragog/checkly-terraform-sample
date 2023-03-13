@@ -25,10 +25,6 @@ resource "checkly_check_group" "key-shop-flows" {
     "eu-central-1"
   ]
 
-  private_locations = [
-    "new-private-location"
-  ]
-
   concurrency               = 2
   double_check              = true
   use_global_alert_settings = false
@@ -54,7 +50,6 @@ resource "checkly_check" "browser-check" {
   should_fail               = false
   frequency                 = 10
   double_check              = true
-  ssl_check                 = false
   use_global_alert_settings = true
   locations = [
     "us-west-1",
@@ -91,7 +86,6 @@ resource "checkly_check" "browser-check-demo" {
   should_fail               = false
   frequency                 = 30
   double_check              = true
-  ssl_check                 = false
   use_global_alert_settings = true
   locations = [
     "us-west-1",
@@ -103,24 +97,6 @@ resource "checkly_check" "browser-check-demo" {
 
 }
 
-resource "checkly_check" "browser-check-1" {
-  name                      = "borry"
-  type                      = "BROWSER"
-  activated                 = true
-  should_fail               = false
-  frequency                 = 30
-  double_check              = true
-  ssl_check                 = false
-  use_global_alert_settings = true
-  locations = [
-    "us-west-1",
-    "eu-central-1"
-  ]
-
-  script = file("${path.module}/demo-scripts/stellantis.js")
-
-}
-
 resource "checkly_check" "get-users" {
   name                      = "GET users"
   type                      = "API"
@@ -128,7 +104,6 @@ resource "checkly_check" "get-users" {
   should_fail               = false
   frequency                 = 1
   double_check              = true
-  ssl_check                 = true
   use_global_alert_settings = true
   degraded_response_time    = 5000
   max_response_time         = 10000
@@ -164,7 +139,6 @@ resource "checkly_check" "post-user" {
   should_fail               = false
   frequency                 = 10
   double_check              = true
-  ssl_check                 = true
   use_global_alert_settings = true
   degraded_response_time    = 5000
   max_response_time         = 10000
@@ -215,7 +189,6 @@ resource "checkly_check" "create-order" {
   should_fail               = false
   frequency                 = 10
   double_check              = true
-  ssl_check                 = true
   use_global_alert_settings = true
   degraded_response_time    = 5000
   max_response_time         = 10000
@@ -251,7 +224,6 @@ resource "checkly_check" "update-order" {
   should_fail               = false
   frequency                 = 10
   double_check              = true
-  ssl_check                 = true
   use_global_alert_settings = true
   degraded_response_time    = 5000
   max_response_time         = 10000
@@ -287,7 +259,6 @@ resource "checkly_check" "cancel-order" {
   should_fail               = false
   frequency                 = 10
   double_check              = true
-  ssl_check                 = true
   use_global_alert_settings = true
   degraded_response_time    = 5000
   max_response_time         = 10000
@@ -329,7 +300,6 @@ resource "checkly_check" "add-to-wishlist" {
   should_fail               = false
   frequency                 = 10
   double_check              = true
-  ssl_check                 = true
   use_global_alert_settings = true
   degraded_response_time    = 5000
   max_response_time         = 10000
@@ -385,7 +355,6 @@ resource "checkly_check" "create-inventory-item" {
   should_fail               = false
   frequency                 = 10
   double_check              = true
-  ssl_check                 = true
   use_global_alert_settings = true
   degraded_response_time    = 5000
   max_response_time         = 10000
@@ -421,7 +390,6 @@ resource "checkly_check" "update-inventory-item" {
   should_fail               = false
   frequency                 = 10
   double_check              = true
-  ssl_check                 = true
   use_global_alert_settings = true
   degraded_response_time    = 5000
   max_response_time         = 10000
@@ -457,7 +425,6 @@ resource "checkly_check" "remove-inventory-item" {
   should_fail               = false
   frequency                 = 10
   double_check              = true
-  ssl_check                 = true
   use_global_alert_settings = true
   degraded_response_time    = 5000
   max_response_time         = 10000
@@ -493,7 +460,6 @@ resource "checkly_check" "get-full-inventory" {
   should_fail               = false
   frequency                 = 10
   double_check              = true
-  ssl_check                 = true
   use_global_alert_settings = true
   degraded_response_time    = 5000
   max_response_time         = 10000
@@ -549,7 +515,6 @@ resource "checkly_check" "update-product-details" {
   should_fail               = false
   frequency                 = 10
   double_check              = true
-  ssl_check                 = true
   use_global_alert_settings = true
   degraded_response_time    = 5000
   max_response_time         = 10000
@@ -585,7 +550,6 @@ resource "checkly_check" "remove-product" {
   should_fail               = false
   frequency                 = 10
   double_check              = true
-  ssl_check                 = true
   use_global_alert_settings = true
   degraded_response_time    = 5000
   max_response_time         = 10000
@@ -621,7 +585,6 @@ resource "checkly_check" "create-collection" {
   should_fail               = false
   frequency                 = 10
   double_check              = true
-  ssl_check                 = true
   use_global_alert_settings = true
   degraded_response_time    = 5000
   max_response_time         = 10000
@@ -657,7 +620,6 @@ resource "checkly_check" "remove-collection" {
   should_fail               = false
   frequency                 = 10
   double_check              = true
-  ssl_check                 = true
   use_global_alert_settings = true
   degraded_response_time    = 5000
   max_response_time         = 10000
@@ -693,7 +655,6 @@ resource "checkly_check" "promote-collection" {
   should_fail               = false
   frequency                 = 10
   double_check              = true
-  ssl_check                 = true
   use_global_alert_settings = true
   degraded_response_time    = 5000
   max_response_time         = 10000
@@ -749,7 +710,6 @@ resource "checkly_check" "create-event" {
   should_fail               = false
   frequency                 = 10
   double_check              = true
-  ssl_check                 = true
   use_global_alert_settings = true
   degraded_response_time    = 5000
   max_response_time         = 10000
@@ -785,7 +745,6 @@ resource "checkly_check" "remove-event" {
   should_fail               = false
   frequency                 = 10
   double_check              = true
-  ssl_check                 = true
   use_global_alert_settings = true
   degraded_response_time    = 5000
   max_response_time         = 10000
