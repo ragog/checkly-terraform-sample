@@ -1,30 +1,10 @@
-const { chromium } = require('playwright')
+import { test, expect } from '@playwright/test';
 
-async function run () {
-  const browser = await chromium.launch()
-  const page = await browser.newPage()
+test('test', async ({ page }) => {
+	test.setTimeout(100000);
 
-  await page.goto('https://www.ft.com/');
-
-  await page.screenshot({ path: 'scr1.png' })
-
-  await page.locator('text=Accept & continue').click();
-
-  await page.locator('text=S&P 500').click();
-
-  await page.locator('text=Data archive').click()
-
-  await page.screenshot({ path: 'scr2.png' })
-
-  const [page1] = await Promise.all([
-    page.waitForEvent('popup'),
-    page.locator('text=FundsManaged funds service19 hours agoSubscribe to view >> a').click()
-  ]);
-
-  await page.screenshot({ path: 'scr3.png' })
-
-  await page.close()
-  await browser.close()
-}
-
-run()
+	await page.goto('https://www.ft.com/');
+	await page.getByRole('link', { name: 'Accept cookies' }).click();
+	await page.getByRole('link', { name: 'Visit Markets Data' }).click();
+	await page.getByRole('link', { name: 'Asia' }).click();
+});
