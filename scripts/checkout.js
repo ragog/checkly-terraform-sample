@@ -4,33 +4,33 @@ test('checkout', async ({ page }) => {
 	const navigationPromise = page.waitForNavigation();
 
 	// navigate to our target web page
-	await page.goto('https://danube-webshop.herokuapp.com/');
+	await page.goto('https://danube-web.shop');
 
 	// add the first item to the cart
-	await page.click(`.preview:nth-child(1) > .preview-author`);
-	await page.click('.detail-wrapper > .call-to-action');
-	await page.click('#logo');
+	await page.locator(`.preview:nth-child(1) > .preview-author`).click();
+	await page.locator('.detail-wrapper > .call-to-action').click();
+	await page.locator('#logo').click();
 
 	// wait until navigation is complete
 	await navigationPromise;
 
 	// navigate to cart and proceed
-	await page.click('#cart');
-	await page.click('.cart > .call-to-action');
-	await page.click('#s-name');
+	await page.locator('#cart').click();
+	await page.locator('.cart > .call-to-action').click();
+	await page.locator('#s-name').click();
 
 	// fill out checkout info
-	await page.type('#s-name', 'Max');
-	await page.type('#s-surname', 'Mustermann');
-	await page.type('#s-address', 'Charlottenstr. 57');
-	await page.type('#s-zipcode', '10117');
-	await page.type('#s-city', 'Berlin');
-	await page.type('#s-company', 'Firma GmbH');
-	await page.click('.checkout > form');
-	await page.click('#asap');
+	await page.locator('#s-name').type('Max');
+	await page.locator('#s-surname').type('Mustermann');
+	await page.locator('#s-address').type('Charlottenstr. 57');
+	await page.locator('#s-zipcode').type('10117');
+	await page.locator('#s-city').type('Berlin');
+	await page.locator('#s-company').type('Firma GmbH');
+	await page.locator('.checkout > form').click();
+	await page.locator('#asap').click();
 
 	// confirm checkout
-	await page.click('.checkout > .call-to-action');
+	await page.locator('.checkout > .call-to-action').click();
 
 	// wait until the order confirmation message is shown
 	await page.waitForSelector('#order-confirmation', { visible: true });

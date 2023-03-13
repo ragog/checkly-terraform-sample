@@ -4,17 +4,17 @@ test('search', async ({ page }) => {
 	const bookList = ['The Foreigner', 'The Transformation', 'For Whom the Ball Tells', 'Baiting for Robot'];
 
 	// navigate to our target web page
-	await page.goto('https://danube-webshop.herokuapp.com/');
+	await page.goto('https://danube-web.shop');
 
 	// search for keyword
-	await page.click('.topbar > input');
-	await page.type('.topbar > input', 'for');
-	await page.click('#button-search');
+	await page.locator('.topbar > input').click();
+	await page.locator('.topbar > input').fill('for');
+	await page.locator('#button-search').click();
 	await page.waitForSelector('.shop-content > ul > .preview:nth-child(1) > .preview-title');
 
 	// halt immediately if results do not equal expected number
 	let resultsNumber = (await page.$$('.preview-title')).length;
-	assert.equal(resultsNumber, bookList.length);
+	expect(resultsNumber).toBe(bookList.length);
 
 	// remove every element found from the original array...
 	for (i = 0; i < resultsNumber; i++) {
@@ -25,5 +25,5 @@ test('search', async ({ page }) => {
 	}
 
 	// ...then assert that the original array is now empty
-	assert.equal(bookList.length, 0);
+	expect(bookList.length).toBe(0);
 });
