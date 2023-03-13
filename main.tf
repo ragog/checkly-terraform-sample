@@ -4,14 +4,14 @@ variable "checkly_account_id" {}
 terraform {
   required_providers {
     checkly = {
-      source = "checkly/checkly"
-      version = "1.6.2"
+      source  = "checkly/checkly"
+      version = "1.6.4"
     }
   }
 }
 
 provider "checkly" {
-  api_key = var.checkly_api_key
+  api_key    = var.checkly_api_key
   account_id = var.checkly_account_id
 }
 
@@ -29,14 +29,20 @@ resource "checkly_check_group" "key-shop-flows" {
     "new-private-location"
   ]
 
-  concurrency = 2
-  environment_variables = {
-    USER_EMAIL = "user@email.com",
-    USER_PASSWORD = "supersecure1",
-    PRODUCTS_NUMBER = 3
-  }
+  concurrency               = 2
   double_check              = true
   use_global_alert_settings = false
+
+  environment_variable {
+    key   = "key1"
+    value = "value 1"
+  }
+
+  environment_variable {
+    key    = "key2"
+    value  = "value 2"
+    locked = true
+  }
 }
 
 resource "checkly_check" "browser-check" {
@@ -55,7 +61,7 @@ resource "checkly_check" "browser-check" {
     "eu-central-1"
   ]
 
-  script = file("${path.module}/scripts/${each.key}")
+  script   = file("${path.module}/scripts/${each.key}")
   group_id = checkly_check_group.key-shop-flows.id
 
 }
@@ -70,7 +76,7 @@ resource "checkly_check_group" "e2e-scenarios" {
     "eu-central-1"
   ]
 
-  concurrency = 2
+  concurrency               = 2
   double_check              = true
   use_global_alert_settings = false
 
@@ -92,8 +98,26 @@ resource "checkly_check" "browser-check-demo" {
     "eu-central-1"
   ]
 
-  script = file("${path.module}/demo-scripts/${each.key}")
+  script   = file("${path.module}/demo-scripts/${each.key}")
   group_id = checkly_check_group.e2e-scenarios.id
+
+}
+
+resource "checkly_check" "browser-check-1" {
+  name                      = "borry"
+  type                      = "BROWSER"
+  activated                 = true
+  should_fail               = false
+  frequency                 = 30
+  double_check              = true
+  ssl_check                 = false
+  use_global_alert_settings = true
+  locations = [
+    "us-west-1",
+    "eu-central-1"
+  ]
+
+  script = file("${path.module}/demo-scripts/stellantis.js")
 
 }
 
@@ -179,7 +203,7 @@ resource "checkly_check_group" "users-api" {
     "eu-central-1"
   ]
 
-  concurrency = 2
+  concurrency               = 2
   double_check              = true
   use_global_alert_settings = false
 }
@@ -290,6 +314,12 @@ resource "checkly_check" "cancel-order" {
       target     = "30"
     }
   }
+  alert_settings {
+    escalation_type = "RUN_BASED"
+    run_based_escalation {
+      failed_run_threshold = 1
+    }
+  }
 }
 
 resource "checkly_check" "add-to-wishlist" {
@@ -337,7 +367,7 @@ resource "checkly_check_group" "orders-api" {
     "eu-west-1",
     "eu-central-1"
   ]
-  concurrency = 2
+  concurrency               = 2
   double_check              = true
   use_global_alert_settings = false
 
@@ -501,7 +531,7 @@ resource "checkly_check_group" "inventory-api" {
     "eu-west-1",
     "eu-central-1"
   ]
-  concurrency = 2
+  concurrency               = 2
   double_check              = true
   use_global_alert_settings = false
 
@@ -701,7 +731,7 @@ resource "checkly_check_group" "products-api" {
     "eu-west-1",
     "eu-central-1"
   ]
-  concurrency = 2
+  concurrency               = 2
   double_check              = true
   use_global_alert_settings = false
 
@@ -793,7 +823,7 @@ resource "checkly_check_group" "events-api" {
     "eu-west-1",
     "eu-central-1"
   ]
-  concurrency = 2
+  concurrency               = 2
   double_check              = true
   use_global_alert_settings = false
 
@@ -808,10 +838,10 @@ resource "checkly_alert_channel" "email_ac" {
   email {
     address = "giovanni@checklyhq.com"
   }
-  send_recovery = true
-  send_failure = false
-  send_degraded = true
-  ssl_expiry = true
+  send_recovery        = true
+  send_failure         = false
+  send_degraded        = true
+  ssl_expiry           = true
   ssl_expiry_threshold = 22
 }
 
@@ -819,10 +849,10 @@ resource "checkly_alert_channel" "email_ac_urgent" {
   email {
     address = "giovanni+alerts@checklyhq.com"
   }
-  send_recovery = true
-  send_failure = false
-  send_degraded = true
-  ssl_expiry = true
+  send_recovery        = true
+  send_failure         = false
+  send_degraded        = true
+  ssl_expiry           = true
   ssl_expiry_threshold = 22
 }
 
@@ -836,13 +866,13 @@ resource "checkly_alert_channel" "pagerduty_ac" {
 }
 
 output "private-location-key" {
-  value = checkly_private_location.location.keys
+  value     = checkly_private_location.location.keys
   sensitive = true
 }
 
 # Simple Private Location example
 resource "checkly_private_location" "location" {
-  name = "New Private Location"
+  name      = "New Private Location"
   slug_name = "new-private-location"
-  icon = "location"
+  icon      = "location"
 }
