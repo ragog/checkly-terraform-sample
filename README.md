@@ -1,6 +1,6 @@
-# Terraform Cloud Sample
+# Checkly Terraform Sample
 
-This Terraform project generates a full-blown monitoring setup for [Danube webshop](https://danube-webshop.herokuapp.com), including tens of API and Browser checks, alert channels, snippets and more. 
+This Terraform project generates a few example checks, groups and alert channels for publicly available APIs and web sites.
 
 ## Usage
 
@@ -15,16 +15,7 @@ $ export TF_VAR_checkly_account_id=<MY_ACCOUNT_ID>
 
 Next, initialise the project and apply your terraform config:
 
-
 ```bash
 $ terraform init
 $ terraform apply
 ```
-
-## Contributing
-
-If you want to help us improve monitoring for Danube, feel free to submit a PR.
-
-## License
-
-[MIT](https://github.com/checkly/headless-recorder/blob/master/LICENSE)
