@@ -1,5 +1,6 @@
 variable "checkly_api_key" {}
 variable "checkly_account_id" {}
+variable "jsonmap_api_key" {}
 
 terraform {
   required_providers {
@@ -182,172 +183,6 @@ resource "checkly_check_group" "users-api" {
   use_global_alert_settings = false
 }
 
-resource "checkly_check" "create-order" {
-  name                      = "create order"
-  type                      = "API"
-  activated                 = true
-  should_fail               = false
-  frequency                 = 10
-  double_check              = true
-  use_global_alert_settings = true
-  degraded_response_time    = 5000
-  max_response_time         = 10000
-
-  locations = [
-    "eu-central-1",
-    "us-west-1"
-  ]
-
-  group_id = checkly_check_group.orders-api.id
-
-  request {
-    url              = "https://danube-webshop.herokuapp.com/api/books"
-    follow_redirects = true
-    assertion {
-      source     = "STATUS_CODE"
-      comparison = "EQUALS"
-      target     = "200"
-    }
-    assertion {
-      source     = "JSON_BODY"
-      property   = "$.length"
-      comparison = "EQUALS"
-      target     = "30"
-    }
-  }
-}
-
-resource "checkly_check" "update-order" {
-  name                      = "update order"
-  type                      = "API"
-  activated                 = true
-  should_fail               = false
-  frequency                 = 10
-  double_check              = true
-  use_global_alert_settings = true
-  degraded_response_time    = 5000
-  max_response_time         = 10000
-
-  locations = [
-    "eu-central-1",
-    "us-west-1"
-  ]
-
-  group_id = checkly_check_group.orders-api.id
-
-  request {
-    url              = "https://danube-webshop.herokuapp.com/api/books"
-    follow_redirects = true
-    assertion {
-      source     = "STATUS_CODE"
-      comparison = "EQUALS"
-      target     = "200"
-    }
-    assertion {
-      source     = "JSON_BODY"
-      property   = "$.length"
-      comparison = "EQUALS"
-      target     = "30"
-    }
-  }
-}
-
-resource "checkly_check" "cancel-order" {
-  name                      = "cancel order"
-  type                      = "API"
-  activated                 = true
-  should_fail               = false
-  frequency                 = 10
-  double_check              = true
-  use_global_alert_settings = true
-  degraded_response_time    = 5000
-  max_response_time         = 10000
-
-  locations = [
-    "eu-central-1",
-    "us-west-1"
-  ]
-
-  group_id = checkly_check_group.orders-api.id
-
-  request {
-    url              = "https://danube-webshop.herokuapp.com/api/books"
-    follow_redirects = true
-    assertion {
-      source     = "STATUS_CODE"
-      comparison = "EQUALS"
-      target     = "200"
-    }
-    assertion {
-      source     = "JSON_BODY"
-      property   = "$.length"
-      comparison = "EQUALS"
-      target     = "30"
-    }
-  }
-  alert_settings {
-    escalation_type = "RUN_BASED"
-    run_based_escalation {
-      failed_run_threshold = 1
-    }
-  }
-}
-
-resource "checkly_check" "add-to-wishlist" {
-  name                      = "add to wishlist"
-  type                      = "API"
-  activated                 = true
-  should_fail               = false
-  frequency                 = 10
-  double_check              = true
-  use_global_alert_settings = true
-  degraded_response_time    = 5000
-  max_response_time         = 10000
-
-  locations = [
-    "eu-central-1",
-    "us-west-1"
-  ]
-
-  group_id = checkly_check_group.orders-api.id
-
-  request {
-    url              = "https://danube-webshop.herokuapp.com/api/books"
-    follow_redirects = true
-    assertion {
-      source     = "STATUS_CODE"
-      comparison = "EQUALS"
-      target     = "200"
-    }
-    assertion {
-      source     = "JSON_BODY"
-      property   = "$.length"
-      comparison = "EQUALS"
-      target     = "30"
-    }
-  }
-}
-
-resource "checkly_check_group" "orders-api" {
-  name      = "Orders API"
-  activated = true
-  muted     = false
-
-  locations = [
-    "eu-west-1",
-    "eu-central-1"
-  ]
-  concurrency               = 2
-  double_check              = true
-  use_global_alert_settings = false
-
-  alert_channel_subscription {
-    channel_id = checkly_alert_channel.pagerduty_ac.id
-    activated  = true
-  }
-
-}
-
 resource "checkly_check" "create-inventory-item" {
   name                      = "create inventory item"
   type                      = "API"
@@ -453,8 +288,8 @@ resource "checkly_check" "remove-inventory-item" {
   }
 }
 
-resource "checkly_check" "get-full-inventory" {
-  name                      = "get full inventory"
+resource "checkly_check" "get-inventory-item" {
+  name                      = "get inventory item"
   type                      = "API"
   activated                 = true
   should_fail               = false
@@ -472,309 +307,22 @@ resource "checkly_check" "get-full-inventory" {
   group_id = checkly_check_group.inventory-api.id
 
   request {
-    url              = "https://danube-webshop.herokuapp.com/api/books"
+    url              = "https://jsonmap.site/api/v1/items/dodge-charger"
     follow_redirects = true
-    assertion {
-      source     = "STATUS_CODE"
-      comparison = "EQUALS"
-      target     = "200"
+    headers = {
+      "Authorization" = "Bearer ${var.jsonmap_api_key}"
     }
     assertion {
       source     = "JSON_BODY"
-      property   = "$.length"
+      property   = "$.origin"
       comparison = "EQUALS"
-      target     = "30"
+      target     = "USA"
     }
   }
 }
 
 resource "checkly_check_group" "inventory-api" {
   name      = "Inventory API"
-  activated = true
-  muted     = false
-
-  locations = [
-    "eu-west-1",
-    "eu-central-1"
-  ]
-  concurrency               = 2
-  double_check              = true
-  use_global_alert_settings = false
-
-  alert_channel_subscription {
-    channel_id = checkly_alert_channel.pagerduty_ac.id
-    activated  = true
-  }
-
-}
-
-resource "checkly_check" "update-product-details" {
-  name                      = "update product details"
-  type                      = "API"
-  activated                 = true
-  should_fail               = false
-  frequency                 = 10
-  double_check              = true
-  use_global_alert_settings = true
-  degraded_response_time    = 5000
-  max_response_time         = 10000
-
-  locations = [
-    "eu-central-1",
-    "us-west-1"
-  ]
-
-  group_id = checkly_check_group.products-api.id
-
-  request {
-    url              = "https://danube-webshop.herokuapp.com/api/books"
-    follow_redirects = true
-    assertion {
-      source     = "STATUS_CODE"
-      comparison = "EQUALS"
-      target     = "200"
-    }
-    assertion {
-      source     = "JSON_BODY"
-      property   = "$.length"
-      comparison = "EQUALS"
-      target     = "30"
-    }
-  }
-}
-
-resource "checkly_check" "remove-product" {
-  name                      = "remove product"
-  type                      = "API"
-  activated                 = true
-  should_fail               = false
-  frequency                 = 10
-  double_check              = true
-  use_global_alert_settings = true
-  degraded_response_time    = 5000
-  max_response_time         = 10000
-
-  locations = [
-    "eu-central-1",
-    "us-west-1"
-  ]
-
-  group_id = checkly_check_group.products-api.id
-
-  request {
-    url              = "https://danube-webshop.herokuapp.com/api/books"
-    follow_redirects = true
-    assertion {
-      source     = "STATUS_CODE"
-      comparison = "EQUALS"
-      target     = "200"
-    }
-    assertion {
-      source     = "JSON_BODY"
-      property   = "$.length"
-      comparison = "EQUALS"
-      target     = "30"
-    }
-  }
-}
-
-resource "checkly_check" "create-collection" {
-  name                      = "create collection"
-  type                      = "API"
-  activated                 = true
-  should_fail               = false
-  frequency                 = 10
-  double_check              = true
-  use_global_alert_settings = true
-  degraded_response_time    = 5000
-  max_response_time         = 10000
-
-  locations = [
-    "eu-central-1",
-    "us-west-1"
-  ]
-
-  group_id = checkly_check_group.products-api.id
-
-  request {
-    url              = "https://danube-webshop.herokuapp.com/api/books"
-    follow_redirects = true
-    assertion {
-      source     = "STATUS_CODE"
-      comparison = "EQUALS"
-      target     = "200"
-    }
-    assertion {
-      source     = "JSON_BODY"
-      property   = "$.length"
-      comparison = "EQUALS"
-      target     = "30"
-    }
-  }
-}
-
-resource "checkly_check" "remove-collection" {
-  name                      = "remove collection"
-  type                      = "API"
-  activated                 = true
-  should_fail               = false
-  frequency                 = 10
-  double_check              = true
-  use_global_alert_settings = true
-  degraded_response_time    = 5000
-  max_response_time         = 10000
-
-  locations = [
-    "eu-central-1",
-    "us-west-1"
-  ]
-
-  group_id = checkly_check_group.products-api.id
-
-  request {
-    url              = "https://danube-webshop.herokuapp.com/api/books"
-    follow_redirects = true
-    assertion {
-      source     = "STATUS_CODE"
-      comparison = "EQUALS"
-      target     = "200"
-    }
-    assertion {
-      source     = "JSON_BODY"
-      property   = "$.length"
-      comparison = "EQUALS"
-      target     = "30"
-    }
-  }
-}
-
-resource "checkly_check" "promote-collection" {
-  name                      = "promote collection"
-  type                      = "API"
-  activated                 = true
-  should_fail               = false
-  frequency                 = 10
-  double_check              = true
-  use_global_alert_settings = true
-  degraded_response_time    = 5000
-  max_response_time         = 10000
-
-  locations = [
-    "eu-central-1",
-    "us-west-1"
-  ]
-
-  group_id = checkly_check_group.products-api.id
-
-  request {
-    url              = "https://danube-webshop.herokuapp.com/api/books"
-    follow_redirects = true
-    assertion {
-      source     = "STATUS_CODE"
-      comparison = "EQUALS"
-      target     = "200"
-    }
-    assertion {
-      source     = "JSON_BODY"
-      property   = "$.length"
-      comparison = "EQUALS"
-      target     = "30"
-    }
-  }
-}
-
-resource "checkly_check_group" "products-api" {
-  name      = "Products API"
-  activated = true
-  muted     = false
-
-  locations = [
-    "eu-west-1",
-    "eu-central-1"
-  ]
-  concurrency               = 2
-  double_check              = true
-  use_global_alert_settings = false
-
-  alert_channel_subscription {
-    channel_id = checkly_alert_channel.pagerduty_ac.id
-    activated  = true
-  }
-
-}
-
-resource "checkly_check" "create-event" {
-  name                      = "create event"
-  type                      = "API"
-  activated                 = true
-  should_fail               = false
-  frequency                 = 10
-  double_check              = true
-  use_global_alert_settings = true
-  degraded_response_time    = 5000
-  max_response_time         = 10000
-
-  locations = [
-    "eu-central-1",
-    "us-west-1"
-  ]
-
-  group_id = checkly_check_group.events-api.id
-
-  request {
-    url              = "https://danube-webshop.herokuapp.com/api/books"
-    follow_redirects = true
-    assertion {
-      source     = "STATUS_CODE"
-      comparison = "EQUALS"
-      target     = "200"
-    }
-    assertion {
-      source     = "JSON_BODY"
-      property   = "$.length"
-      comparison = "EQUALS"
-      target     = "30"
-    }
-  }
-}
-
-resource "checkly_check" "remove-event" {
-  name                      = "remove event"
-  type                      = "API"
-  activated                 = true
-  should_fail               = false
-  frequency                 = 10
-  double_check              = true
-  use_global_alert_settings = true
-  degraded_response_time    = 5000
-  max_response_time         = 10000
-
-  locations = [
-    "eu-central-1",
-    "us-west-1"
-  ]
-
-  group_id = checkly_check_group.events-api.id
-
-  request {
-    url              = "https://danube-webshop.herokuapp.com/api/books"
-    follow_redirects = true
-    assertion {
-      source     = "STATUS_CODE"
-      comparison = "EQUALS"
-      target     = "200"
-    }
-    assertion {
-      source     = "JSON_BODY"
-      property   = "$.length"
-      comparison = "EQUALS"
-      target     = "30"
-    }
-  }
-}
-
-resource "checkly_check_group" "events-api" {
-  name      = "Events API"
   activated = true
   muted     = false
 
@@ -814,7 +362,6 @@ resource "checkly_alert_channel" "email_ac_urgent" {
   ssl_expiry           = true
   ssl_expiry_threshold = 22
 }
-
 
 resource "checkly_alert_channel" "pagerduty_ac" {
   pagerduty {
